@@ -15,7 +15,7 @@ class ReverseTest(unittest.TestCase):
         self.assertEqual("A", reverse_complement("T"))
 
     def test_reverse_complement_two_characters(self):
-        self.assertEqual("A", reverse_complement("GT"))
+        self.assertEqual("AC", reverse_complement("GT"))
 
 
 if __name__ == '__main__':
