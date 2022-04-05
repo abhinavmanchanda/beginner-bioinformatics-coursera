@@ -74,14 +74,15 @@ def ProfileMostProbableKmer(text, k, profile):
         kmer = text[iterator:iterator + k]
         probabilities[iterator] = Pr(kmer, profile)
     probable_index = probabilities.index(max(probabilities))
-    return text[probable_index:probable_index+k]
+    return text[probable_index:probable_index + k]
+
 
 def GreedyMotifSearch(Dna, k, t):
     best_motifs = list(map(lambda current_dna: current_dna[0:k], Dna))
     dna_string_length = len(Dna[0])
-    for i in range(dna_string_length-k+1):
+    for i in range(dna_string_length - k + 1):
         current_motifs = [""] * t
-        current_motifs[0] = Dna[0][i:i+k]
+        current_motifs[0] = Dna[0][i:i + k]
         for j in range(1, t):
             profile = Profile(current_motifs[0:j])
             current_motifs[j] = ProfileMostProbableKmer(Dna[j], k, profile)
@@ -89,27 +90,30 @@ def GreedyMotifSearch(Dna, k, t):
             best_motifs = current_motifs
     return best_motifs
 
+
 def CountWithPseudocounts(Motifs):
     motifs_count = Count(Motifs)
     return {key: add_pseudocount_toarray(value) for key, value in motifs_count.items()}
 
 
 def add_pseudocount_toarray(motif_count_array):
-    return list(map(lambda x: x+1, motif_count_array))
+    return list(map(lambda x: x + 1, motif_count_array))
+
 
 # Input:  A set of kmers Motifs
 # Output: ProfileWithPseudocounts(Motifs)
 def ProfileWithPseudocounts(Motifs):
     motifs_pseudocounts = CountWithPseudocounts(Motifs)
     divisor = len(Motifs) + 4
-    return {key: list(map(lambda x: x/divisor, value)) for key, value in motifs_pseudocounts.items()}
+    return {key: list(map(lambda x: x / divisor, value)) for key, value in motifs_pseudocounts.items()}
+
 
 def GreedyMotifSearchWithPseudocounts(Dna, k, t):
     best_motifs = list(map(lambda current_dna: current_dna[0:k], Dna))
     dna_string_length = len(Dna[0])
-    for i in range(dna_string_length-k+1):
+    for i in range(dna_string_length - k + 1):
         current_motifs = [""] * t
-        current_motifs[0] = Dna[0][i:i+k]
+        current_motifs[0] = Dna[0][i:i + k]
         for j in range(1, t):
             profile = ProfileWithPseudocounts(current_motifs[0:j])
             current_motifs[j] = ProfileMostProbableKmer(Dna[j], k, profile)
@@ -117,3 +121,6 @@ def GreedyMotifSearchWithPseudocounts(Dna, k, t):
             best_motifs = current_motifs
     return best_motifs
 
+
+def Motifs(Profile, Dna):
+    return list(map(lambda text: ProfileMostProbableKmer(text, len(Profile), Profile), Dna))
