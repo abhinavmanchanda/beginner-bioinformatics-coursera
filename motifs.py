@@ -123,4 +123,24 @@ def GreedyMotifSearchWithPseudocounts(Dna, k, t):
 
 
 def Motifs(Profile, Dna):
-    return list(map(lambda text: ProfileMostProbableKmer(text, len(Profile), Profile), Dna))
+    return list(map(lambda text: ProfileMostProbableKmer(text, len(Profile[next(iter(Profile))]), Profile), Dna))
+
+
+import random
+
+def RandomMotifs(Dna, k, t):
+    return list(map(lambda text: select_random_motif(text, k), Dna))
+
+def select_random_motif(dna_text, motif_length):
+    position = random.randint(0, len(dna_text) - motif_length)
+    return dna_text[position: position + motif_length]
+
+def RandomizedMotifSearch(Dna, k, t):
+    random_motifs = RandomMotifs(Dna, k, t)
+    return converge_to_optimum_motifs(random_motifs, Dna)
+
+def converge_to_optimum_motifs(current_motifs, dna):
+    newly_computed_motifs = Motifs(ProfileWithPseudocounts(current_motifs), dna)
+    if Score(newly_computed_motifs) == Score(current_motifs):
+        return current_motifs
+    return converge_to_optimum_motifs(newly_computed_motifs, dna)
