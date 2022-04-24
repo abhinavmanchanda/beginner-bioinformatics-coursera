@@ -37,11 +37,5 @@ def dna_complement(pattern):
 def reverse(s):
     return s if len(s) == 0 else reverse(s[1:]) + s[0]
 
-def character_dna_complement(pattern):
-    dna_complement = {
-        "A": "T",
-        "T": "A",
-        "G": "C",
-        "C": "G"
-    }
-    return dna_complement[pattern]
+def character_dna_complement(character):
+    return {"A": "T", "T": "A", "G": "C", "C": "G"}[character]
