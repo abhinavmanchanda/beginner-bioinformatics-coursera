@@ -1,9 +1,6 @@
 import unittest
-from motifs import GreedyMotifSearch
-from motifs import CountWithPseudocounts
-from motifs import ProfileWithPseudocounts
-from motifs import GreedyMotifSearchWithPseudocounts
-from motifs import Motifs
+
+from motifs import *
 
 
 class MotifsTest(unittest.TestCase):
@@ -97,6 +94,52 @@ class MotifsTest(unittest.TestCase):
             "AGGT"
         ]
         self.assertEqual(expected_output, Motifs(profile, dna))
+
+    def test_find_best_motif_out_of_multiple_randomized_runs(self):
+        dna = [
+            'GGCGTTCAGGCA',
+            'AAGAATCAGTCA',
+            'CAAGGAGTTCGC',
+            'CACGTCAATCAC',
+            'CAATAATATTCG'
+        ]
+        self.assertEqual(Score(['CAG', 'CAG', 'CAA', 'CAA', 'CAA']), Score(best_randomised_motifs(dna, 3, 5)))
+
+    def test_normalize_probabilities(self):
+        self.assertEqual({'A': 0.25, 'C': 0.25, 'G': 0.25, 'T': 0.25},
+                         Normalize({'A': 0.1, 'C': 0.1, 'G': 0.1, 'T': 0.1})
+                        )
+
+    def test_create_probability_ranges_from_probabilities(self):
+        self.assertEqual(
+                         {'A': {'lower': 0, 'upper': 0.25},
+                          'B': {'lower': 0.25, 'upper': 4.25},
+                          'C': {'lower': 4.25, 'upper': 16.25},
+                          'D': {'lower': 16.25, 'upper': 27.36}
+                         },
+                         key_vs_range({'A':0.25, 'B': 4, 'C':12, 'D':11.11}))
+
+    def test_weighted_die_throw(self):
+        output_count = {'x':0,'y':0,'abc':0}
+        for i in range(10000):
+            current_output =  WeightedDie({'x':0.33, 'y':0.5, 'abc':.17})
+            output_count[current_output] = output_count[current_output] + 1
+        self.assertTrue(4400<output_count['y']<5500)
+        self.assertTrue(2800<output_count['x']<3800)
+        self.assertTrue(1200<output_count['abc']<2200)
+
+    def test_generate_weighted_probability_motif_based_on_profile(self):
+        text = 'AAACCCAAACCC'
+        profile = {'A': [0.5, 0.1], 'C': [0.3, 0.2], 'G': [0.2, 0.4], 'T': [0.0, 0.3]}
+        output_count = dict()
+        for i in range(10000):
+            current_output = ProfileGeneratedString(text, profile, 2)
+            output_count[current_output] = output_count.get(current_output, 0) + 1
+        self.assertTrue(1500<output_count['AA']<2500)
+        self.assertTrue(3600<output_count['AC']<4600)
+        self.assertTrue(2000<output_count['CC']<3000)
+        self.assertTrue(800<output_count['CA']<1800)
+
 
 
 if __name__ == '__main__':

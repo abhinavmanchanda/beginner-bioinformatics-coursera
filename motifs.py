@@ -47,7 +47,6 @@ def Consensus(Motifs):
 
 from functools import reduce
 
-
 def HammingDistance(p, q):
     plist = list(p)
     qlist = list(q)
@@ -128,19 +127,55 @@ def Motifs(Profile, Dna):
 
 import random
 
+
 def RandomMotifs(Dna, k, t):
     return list(map(lambda text: select_random_motif(text, k), Dna))
+
 
 def select_random_motif(dna_text, motif_length):
     position = random.randint(0, len(dna_text) - motif_length)
     return dna_text[position: position + motif_length]
 
+
 def RandomizedMotifSearch(Dna, k, t):
     random_motifs = RandomMotifs(Dna, k, t)
     return converge_to_optimum_motifs(random_motifs, Dna)
+
 
 def converge_to_optimum_motifs(current_motifs, dna):
     newly_computed_motifs = Motifs(ProfileWithPseudocounts(current_motifs), dna)
     if Score(newly_computed_motifs) == Score(current_motifs):
         return current_motifs
     return converge_to_optimum_motifs(newly_computed_motifs, dna)
+
+
+def best_randomised_motifs(dna_array, motif_length, runs):
+    best_of_current_run = RandomizedMotifSearch(dna_array, motif_length, len(dna_array))
+    if runs == 1: return best_of_current_run
+    best_of_other_runs = best_randomised_motifs(dna_array, motif_length, runs - 1)
+    return best_of_current_run if Score(best_of_current_run) < Score(best_of_other_runs) else best_of_other_runs
+
+def Normalize(Probabilities):
+    sum_of_probabilities = sum(Probabilities.values())
+    return {k: v/sum_of_probabilities for k, v in Probabilities.items()}
+
+def WeightedDie(Probabilities):
+    key_to_range = key_vs_range(Probabilities)
+    random_fraction = random.uniform(0, 1)
+    return next(key for key, value in key_to_range.items() if value['lower'] < random_fraction <= value['upper'])
+
+
+def key_vs_range(Probabilities):
+    key_list = Probabilities.keys()
+    value_list = map(lambda key: Probabilities[key], key_list)
+    upper_bound_list = reduce(lambda result, element: result + [result[-1] + element], value_list, [0])[1:]
+    lower_bound_list = [0] + upper_bound_list[:-1]
+    lower_and_upper_bounds = list(
+        map(lambda lower, upper: {'lower': lower, 'upper': upper}, lower_bound_list, upper_bound_list))
+    return dict(zip(key_list, lower_and_upper_bounds))
+
+def ProfileGeneratedString(Text, profile, k):
+    text_length = len(Text)
+    probabilities = {Text[index:index+k]: Pr(Text[index:index+k], profile) for index in range(text_length - k + 1)}
+    weighted_probabilities = Normalize(probabilities)
+    return WeightedDie(weighted_probabilities)
