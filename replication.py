@@ -6,9 +6,7 @@ def PatternCount(Text, Pattern):
 
 
 def count_occurence(text, pattern):
-    return len(list(filter(lambda i: text[i:i + len(pattern)] == pattern, range(len(text) - len(pattern) + 1))))
-
-    # return sum(1 for i in range(len(text) - len(pattern) + 1) if text[i:i + len(pattern)] == pattern)
+    return sum(1 for i in range(len(text) - len(pattern) + 1) if text[i:i + len(pattern)] == pattern)
 
 
 def combine_dictionary_counts(a, b):
