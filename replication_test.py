@@ -2,6 +2,7 @@ from unittest import TestCase
 from replication import count_occurence
 from replication import frequency_map_for_kmers
 from replication import most_frequent_substrings
+from replication import ReverseComplement
 
 class Test(TestCase):
     def test_count_occurrence_of_a_pattern_in_a_text(self):
@@ -14,3 +15,7 @@ class Test(TestCase):
     def test_find_most_frequent_substrings_of_a_given_length_in_a_string(self):
         expected_output = ['CATG', 'GCAT']
         self.assertCountEqual(expected_output, most_frequent_substrings('ACGTTGCATGTCGCATGATGCATGAGAGCT', 4))
+
+    def test_complement_and_reverse_to_find_pairing_of_DNA_strand(self):
+        expected_output = 'ATACGTC'
+        self.assertCountEqual(expected_output, ReverseComplement('GACGTAT'))

@@ -25,3 +25,23 @@ def FrequencyMap(Text, k):
 
 def FrequentWords(Text, k):
     return most_frequent_substrings(Text, k)
+
+def ReverseComplement(Pattern):
+    complement = dna_complement(Pattern)
+    return reverse(complement)
+
+def dna_complement(pattern):
+    return ''.join(map(character_dna_complement, pattern))
+
+
+def reverse(s):
+    return s if len(s) == 0 else reverse(s[1:]) + s[0]
+
+def character_dna_complement(pattern):
+    dna_complement = {
+        "A": "T",
+        "T": "A",
+        "G": "C",
+        "C": "G"
+    }
+    return dna_complement[pattern]
