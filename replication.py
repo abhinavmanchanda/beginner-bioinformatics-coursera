@@ -27,15 +27,33 @@ def FrequentWords(Text, k):
     return most_frequent_substrings(Text, k)
 
 def ReverseComplement(Pattern):
-    complement = dna_complement(Pattern)
-    return reverse(complement)
+    return reverse(dna_complement(Pattern))
 
 def dna_complement(pattern):
     return ''.join(map(character_dna_complement, pattern))
-
 
 def reverse(s):
     return s if len(s) == 0 else reverse(s[1:]) + s[0]
 
 def character_dna_complement(character):
     return {"A": "T", "T": "A", "G": "C", "C": "G"}[character]
+
+def half_string_symbol_count(text, symbol, index):
+    length = len(text)
+    extended_text = text + text[0:length // 2]
+    return PatternCount(extended_text[index:index+(length // 2)], symbol)
+
+def SymbolArray(genome, symbol):
+    return {i: half_string_symbol_count(genome, symbol, i) for i in range(0, len(genome))}
+
+
+def FasterSymbolArray(Genome, symbol):
+    array = {}
+    length = len(Genome)
+    extended_genome = Genome + Genome[0:length//2]
+    array[0] = extended_genome[0:length//2].count(symbol)
+    for i in range(1, length):
+        array[i] = array[i-1] - extended_genome[i-1:i].count(symbol) + extended_genome[i+length//2-1:i+length//2].count(symbol)
+
+    return array
+
