@@ -63,3 +63,14 @@ def update_half_array_symbol_count(extended_genome, index, original_genome_lengt
     return previous_value \
            - int(extended_genome[index - 1] == symbol) \
            + int(extended_genome[index + original_genome_length // 2 - 1] == symbol)
+
+def SkewArray(Genome):
+    nucleotide_to_value = {"A":0, "T":0, "G":1, "C":-1}
+    array = list(accumulate(Genome, lambda result, nucleotide: result + nucleotide_to_value[nucleotide], initial = 0))
+    return array
+
+def MinimumSkew(Genome):
+    skew_array = SkewArray(Genome)
+    minimum_skew = min(skew_array)
+    return [index for index in range(len(skew_array)) if skew_array[index] == minimum_skew]
+

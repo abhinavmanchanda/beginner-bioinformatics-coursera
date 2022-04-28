@@ -6,6 +6,8 @@ from replication import ReverseComplement
 from replication import half_string_symbol_count
 from replication import SymbolArray
 from replication import FasterSymbolArray
+from replication import SkewArray
+from replication import MinimumSkew
 
 class Test(TestCase):
     def test_count_occurrence_of_a_pattern_in_a_text(self):
@@ -33,3 +35,11 @@ class Test(TestCase):
     def test_find_half_string_symbol_count_for_all_indices_in_o_n(self):
         expected_output = {0: 4, 1: 3, 2: 2, 3: 1, 4: 0, 5: 1, 6: 2, 7: 3}
         self.assertEqual(expected_output, FasterSymbolArray('AAAAGGGG', 'A'))
+
+    def test_create_skew_array_for_a_given_genome(self):
+        expected_output = [0, -1, -1, -1, 0, 1, 2, 1, 1, 1, 0, 1, 2, 1, 0, 0, 0, 0, -1, 0, -1, -2]
+        self.assertEqual(expected_output, SkewArray('CATGGGCATCGGCCATACGCC'))
+
+    def test_find_min_skew_for_a_genome(self):
+        expected_output = [11, 24]
+        self.assertEqual(expected_output, MinimumSkew('TAAAGACTGCCGAGAGGCCAACACGAGTGCTAGAACGAGGGGCGTAAACGCGGGTCCGAT'))
