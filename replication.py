@@ -1,4 +1,5 @@
 from functools import reduce
+from itertools import accumulate
 
 
 def PatternCount(Text, Pattern):
@@ -41,19 +42,24 @@ def character_dna_complement(character):
 def half_string_symbol_count(text, symbol, index):
     length = len(text)
     extended_text = text + text[0:length // 2]
-    return PatternCount(extended_text[index:index+(length // 2)], symbol)
+    return PatternCount(extended_text[index:index + (length // 2)], symbol)
 
 def SymbolArray(genome, symbol):
     return {i: half_string_symbol_count(genome, symbol, i) for i in range(0, len(genome))}
 
 
-def FasterSymbolArray(Genome, symbol):
-    array = {}
-    length = len(Genome)
-    extended_genome = Genome + Genome[0:length//2]
-    array[0] = extended_genome[0:length//2].count(symbol)
-    for i in range(1, length):
-        array[i] = array[i-1] - extended_genome[i-1:i].count(symbol) + extended_genome[i+length//2-1:i+length//2].count(symbol)
+def FasterSymbolArray(genome, symbol):
+    initial_value = half_string_symbol_count(genome, symbol, 0)
+    genome_length = len(genome)
+    extended_genome = genome + genome[0:genome_length // 2]
+    indices = list(range(1, genome_length))
+    constructed_list = list(accumulate(indices,
+               lambda result, index: update_half_array_symbol_count(extended_genome, index,
+                                                                    genome_length, result, symbol), initial=initial_value))
+    return dict(enumerate(constructed_list))
 
-    return array
-
+def update_half_array_symbol_count(extended_genome, index, original_genome_length, previous_value,
+                                   symbol):
+    return previous_value \
+           - int(extended_genome[index - 1] == symbol) \
+           + int(extended_genome[index + original_genome_length // 2 - 1] == symbol)
