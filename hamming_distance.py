@@ -3,7 +3,6 @@ from functools import reduce
 # Input:  Strings Pattern and Text, and an integer d
 # Output: The number of times Pattern appears in Text with at most d mismatches
 def ApproximatePatternCount(Pattern, Text, d):
-    count = 0
     return len(ApproximatePatternMatching(Text, Pattern, d))
 
 def ApproximatePatternMatching(Text, Pattern, d):
