@@ -4,6 +4,24 @@ from motifs import *
 
 
 class MotifsTest(unittest.TestCase):
+
+    def test_create_motif_count_dictionary_matrix(self):
+        motifs = [
+            "AACGTA",
+            "CCCGTT",
+            "CACCTT",
+            "GGATTA",
+            "TTCCGG"
+        ]
+        expected_output = {
+            'A': [1, 2, 1, 0, 0, 2],
+            'C': [2, 1, 4, 2, 0, 0],
+            'G': [1, 1, 0, 2, 1, 1],
+            'T': [1, 1, 0, 1, 4, 2]
+        }
+
+        self.assertEqual(expected_output, Count(motifs))
+
     def test_should_greedily_search_for_motif(self):
         k = 3
         t = 5
