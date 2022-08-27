@@ -1,5 +1,3 @@
-# Input:  A set of kmers Motifs
-# Output: Count(Motifs)
 def Count(Motifs):
     return {symbol: count_array(symbol, Motifs) for symbol in "ACGT"}
 
@@ -34,11 +32,7 @@ def consensus_symbol_at_index(count_matrix, index, symbols):
 from functools import reduce
 
 def HammingDistance(p, q):
-    plist = list(p)
-    qlist = list(q)
-    temp = list(map(lambda x, y: int(x != y), plist, qlist))
-    return reduce(lambda a, b: a + b, temp, 0)
-
+    return sum(list(map(lambda x, y: int(x != y), list(p), list(q))))
 
 def Score(Motifs):
     consensus = Consensus(Motifs)
