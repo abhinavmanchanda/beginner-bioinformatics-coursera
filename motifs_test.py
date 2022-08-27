@@ -57,6 +57,9 @@ class MotifsTest(unittest.TestCase):
         possible_expected_outputs = ["CACCTA", "CACGTT", "CACCTT", "CACGTA"]
         self.assertTrue(actual_output in possible_expected_outputs)
 
+    def test_consensus_string_score_for_a_list_of_motifs(self):
+        self.assertEqual(14, Score(["AACGTA", "CCCGTT", "CACCTT", "GGATTA", "TTCCGG"]))
+
     def test_should_greedily_search_for_motif(self):
         k = 3
         t = 5

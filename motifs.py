@@ -35,10 +35,7 @@ def HammingDistance(p, q):
     return sum(list(map(lambda x, y: int(x != y), list(p), list(q))))
 
 def Score(Motifs):
-    consensus = Consensus(Motifs)
-    diff_list = map(lambda motif: HammingDistance(motif, consensus), Motifs)
-    return reduce(lambda a, b: a + b, diff_list)
-
+    return sum(map(lambda motif: HammingDistance(motif, Consensus(Motifs)), Motifs))
 
 def Pr(Text, Profile):
     probability = 1
