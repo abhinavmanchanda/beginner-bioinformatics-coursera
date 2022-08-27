@@ -22,6 +22,37 @@ class MotifsTest(unittest.TestCase):
 
         self.assertEqual(expected_output, Count(motifs))
 
+    def test_create_profile_matrix_for_motif_list(self):
+        motifs = [
+            "AACGTA",
+            "CCCGTT",
+            "CACCTT",
+            "GGATTA",
+            "TTCCGG"
+        ]
+        expected_output = {
+            'A': [0.2, 0.4, 0.2, 0, 0, 0.4],
+            'C': [0.4, 0.2, 0.8, 0.4, 0, 0],
+            'G': [0.2, 0.2, 0, 0.4, 0.2, 0.2],
+            'T': [0.2, 0.2, 0, 0.2, 0.8, 0.4]
+        }
+
+        self.assertEqual(expected_output, Profile(motifs))
+
+    def test_consensus_symbol_for_index(self):
+        motifs = [
+            "AACGTA",
+            "CCCGTT",
+            "CACCTT",
+            "GGATTA",
+            "TTCCGG"
+        ]
+        index = 2
+        expected_output = "C"
+
+        self.assertEqual(expected_output, consensus_symbol_at_index(Count(motifs), index, "ACGT"))
+
+
     def test_should_greedily_search_for_motif(self):
         k = 3
         t = 5

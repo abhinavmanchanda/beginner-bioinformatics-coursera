@@ -1,28 +1,19 @@
 # Input:  A set of kmers Motifs
 # Output: Count(Motifs)
 def Count(Motifs):
-    count = {}  # initializing the count dictionary
-    motif_string_length = len(Motifs[0])
-    for symbol in "ACGT":
-        count[symbol] = []
-        for string_position in range(motif_string_length):
-            count[symbol].append(0)
+    return {symbol: count_array(symbol, Motifs) for symbol in "ACGT"}
 
-    number_of_motifs = len(Motifs)
-    for current_motif in range(number_of_motifs):
-        for string_position in range(motif_string_length):
-            symbol = Motifs[current_motif][string_position]
-            count[symbol][string_position] += 1
-    return count
+def count_array(symbol, motifs):
+   individual_count_arrays = [symbol_count_array_for_single_motif(symbol, motif) for motif in motifs]
+   return [sum(elements) for elements in zip(*individual_count_arrays)]
 
+def symbol_count_array_for_single_motif(symbol, motif):
+    return [1 if current_symbol == symbol else 0 for current_symbol in motif]
 
 def Profile(Motifs):
     count = Count(Motifs)
     number_of_motifs = len(Motifs)
-    profile = {}
-    for symbol in "ACGT":
-        profile[symbol] = motif_profile_for_symbol(count[symbol], number_of_motifs)
-    return profile
+    return {symbol: motif_profile_for_symbol(count[symbol], number_of_motifs) for symbol in "AGCT"}
 
 
 def motif_profile_for_symbol(count_array_for_symbol, number_of_motifs):
@@ -44,6 +35,10 @@ def Consensus(Motifs):
 
     return consensus
 
+def consensus_symbol_at_index(count_matrix, index, symbols):
+    count_to_symbols_tuple = {count_matrix[symbol][index]: symbol for symbol in symbols}
+    max_count = max(count_to_symbols_tuple.keys())
+    return count_to_symbols_tuple[max_count]
 
 from functools import reduce
 
