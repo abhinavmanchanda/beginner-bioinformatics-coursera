@@ -20,16 +20,11 @@ def motif_profile_for_symbol(count_array_for_symbol, number_of_motifs):
     return list(map(lambda x: x / number_of_motifs, count_array_for_symbol))
 
 def Consensus(Motifs):
-    count_matrix = Count(Motifs)
-    symbols = "ACGT"
-    string_length = len(Motifs[0])
-    consensus_list = [consensus_symbol_at_index(count_matrix, i, symbols) for i in range(string_length)]
-    return ''.join(consensus_list)
+    return ''.join([consensus_symbol_at_index(Count(Motifs), i, "ACGT") for i in range(len(Motifs[0]))])
 
 def consensus_symbol_at_index(count_matrix, index, symbols):
     count_to_symbols_tuple = {count_matrix[symbol][index]: symbol for symbol in symbols}
-    max_count = max(count_to_symbols_tuple.keys())
-    return count_to_symbols_tuple[max_count]
+    return count_to_symbols_tuple[max(count_to_symbols_tuple.keys())]
 
 from functools import reduce
 
