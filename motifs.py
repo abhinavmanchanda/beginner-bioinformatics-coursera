@@ -19,21 +19,12 @@ def Profile(Motifs):
 def motif_profile_for_symbol(count_array_for_symbol, number_of_motifs):
     return list(map(lambda x: x / number_of_motifs, count_array_for_symbol))
 
-
 def Consensus(Motifs):
-    profile = Profile(Motifs)
-    consensus_length = len(Motifs[0])
+    count_matrix = Count(Motifs)
     symbols = "ACGT"
-    consensus_profile = profile[symbols[0]]
-    consensus = symbols[0] * consensus_length
-    for symbol in symbols[1:len(symbols)]:
-        symbol_profile = profile[symbol]
-        for iterator in range(len(symbol_profile)):
-            if symbol_profile[iterator] > consensus_profile[iterator]:
-                consensus_profile[iterator] = symbol_profile[iterator]
-                consensus = consensus[:iterator] + symbol + consensus[iterator + 1:]
-
-    return consensus
+    string_length = len(Motifs[0])
+    consensus_list = [consensus_symbol_at_index(count_matrix, i, symbols) for i in range(string_length)]
+    return ''.join(consensus_list)
 
 def consensus_symbol_at_index(count_matrix, index, symbols):
     count_to_symbols_tuple = {count_matrix[symbol][index]: symbol for symbol in symbols}

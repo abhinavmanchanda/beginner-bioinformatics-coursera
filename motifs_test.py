@@ -39,19 +39,23 @@ class MotifsTest(unittest.TestCase):
 
         self.assertEqual(expected_output, Profile(motifs))
 
-    def test_consensus_symbol_for_index(self):
-        motifs = [
-            "AACGTA",
-            "CCCGTT",
-            "CACCTT",
-            "GGATTA",
-            "TTCCGG"
-        ]
-        index = 2
-        expected_output = "C"
+    def test_find_consensus_symbol_for_a_particular_index_in_list_of_motifs(self):
+        motifs = [ "AACGTA",
+                   "CCCGTT",
+                   "CACCTT",
+                   "GGATTA",
+                   "TTCCGG"]
+        self.assertEqual("C", consensus_symbol_at_index(Count(motifs), 2, "ACGT"))
 
-        self.assertEqual(expected_output, consensus_symbol_at_index(Count(motifs), index, "ACGT"))
-
+    def test_find_consensus_string_for_a_given_list_of_motifs(self):
+        motifs = [ "AACGTA",
+                   "CCCGTT",
+                   "CACCTT",
+                   "GGATTA",
+                   "TTCCGG"]
+        actual_output = Consensus(motifs)
+        possible_expected_outputs = ["CACCTA", "CACGTT", "CACCTT", "CACGTA"]
+        self.assertTrue(actual_output in possible_expected_outputs)
 
     def test_should_greedily_search_for_motif(self):
         k = 3
