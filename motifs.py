@@ -29,8 +29,6 @@ def consensus_symbol_at_index(count_matrix, index, symbols):
     max_count = max(count_to_symbols_tuple.keys())
     return count_to_symbols_tuple[max_count]
 
-from functools import reduce
-
 def HammingDistance(p, q):
     return sum(list(map(lambda x, y: int(x != y), list(p), list(q))))
 
