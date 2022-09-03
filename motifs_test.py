@@ -40,25 +40,30 @@ class MotifsTest(unittest.TestCase):
         self.assertEqual(expected_output, Profile(motifs))
 
     def test_find_consensus_symbol_for_a_particular_index_in_list_of_motifs(self):
-        motifs = [ "AACGTA",
-                   "CCCGTT",
-                   "CACCTT",
-                   "GGATTA",
-                   "TTCCGG"]
+        motifs = ["AACGTA",
+                  "CCCGTT",
+                  "CACCTT",
+                  "GGATTA",
+                  "TTCCGG"]
         self.assertEqual("C", consensus_symbol_at_index(Count(motifs), 2, "ACGT"))
 
     def test_find_consensus_string_for_a_given_list_of_motifs(self):
-        motifs = [ "AACGTA",
-                   "CCCGTT",
-                   "CACCTT",
-                   "GGATTA",
-                   "TTCCGG"]
+        motifs = ["AACGTA",
+                  "CCCGTT",
+                  "CACCTT",
+                  "GGATTA",
+                  "TTCCGG"]
         actual_output = Consensus(motifs)
         possible_expected_outputs = ["CACCTA", "CACGTT", "CACCTT", "CACGTA"]
         self.assertTrue(actual_output in possible_expected_outputs)
 
     def test_consensus_string_score_for_a_list_of_motifs(self):
         self.assertEqual(14, Score(["AACGTA", "CCCGTT", "CACCTT", "GGATTA", "TTCCGG"]))
+
+    def test_probability_of_motif_from_profile_matrix(self):
+        expected = 0.22222
+        actual = Pr("AGA", {'A': [0.33, 0, 1], 'T': [0.67, 0, 0], 'C': [0, 0.33, 0], 'G': [0, 0.67, 0]})
+        self.assertAlmostEqual(expected, actual, 2)
 
     def test_should_greedily_search_for_motif(self):
         k = 3
@@ -164,25 +169,25 @@ class MotifsTest(unittest.TestCase):
     def test_normalize_probabilities(self):
         self.assertEqual({'A': 0.25, 'C': 0.25, 'G': 0.25, 'T': 0.25},
                          Normalize({'A': 0.1, 'C': 0.1, 'G': 0.1, 'T': 0.1})
-                        )
+                         )
 
     def test_create_probability_ranges_from_probabilities(self):
         self.assertEqual(
-                         {'A': {'lower': 0, 'upper': 0.25},
-                          'B': {'lower': 0.25, 'upper': 4.25},
-                          'C': {'lower': 4.25, 'upper': 16.25},
-                          'D': {'lower': 16.25, 'upper': 27.36}
-                         },
-                         key_vs_range({'A':0.25, 'B': 4, 'C':12, 'D':11.11}))
+            {'A': {'lower': 0, 'upper': 0.25},
+             'B': {'lower': 0.25, 'upper': 4.25},
+             'C': {'lower': 4.25, 'upper': 16.25},
+             'D': {'lower': 16.25, 'upper': 27.36}
+             },
+            key_vs_range({'A': 0.25, 'B': 4, 'C': 12, 'D': 11.11}))
 
     def test_weighted_die_throw(self):
-        output_count = {'x':0,'y':0,'abc':0}
+        output_count = {'x': 0, 'y': 0, 'abc': 0}
         for i in range(10000):
-            current_output =  WeightedDie({'x':0.33, 'y':0.5, 'abc':.17})
+            current_output = WeightedDie({'x': 0.33, 'y': 0.5, 'abc': .17})
             output_count[current_output] = output_count[current_output] + 1
-        self.assertTrue(4400<output_count['y']<5500)
-        self.assertTrue(2800<output_count['x']<3800)
-        self.assertTrue(1200<output_count['abc']<2200)
+        self.assertTrue(4400 < output_count['y'] < 5500)
+        self.assertTrue(2800 < output_count['x'] < 3800)
+        self.assertTrue(1200 < output_count['abc'] < 2200)
 
     def test_generate_weighted_probability_motif_based_on_profile(self):
         text = 'AAACCCAAACCC'
@@ -191,11 +196,10 @@ class MotifsTest(unittest.TestCase):
         for i in range(10000):
             current_output = ProfileGeneratedString(text, profile, 2)
             output_count[current_output] = output_count.get(current_output, 0) + 1
-        self.assertTrue(1500<output_count['AA']<2500)
-        self.assertTrue(3600<output_count['AC']<4600)
-        self.assertTrue(2000<output_count['CC']<3000)
-        self.assertTrue(800<output_count['CA']<1800)
-
+        self.assertTrue(1500 < output_count['AA'] < 2500)
+        self.assertTrue(3600 < output_count['AC'] < 4600)
+        self.assertTrue(2000 < output_count['CC'] < 3000)
+        self.assertTrue(800 < output_count['CA'] < 1800)
 
 
 if __name__ == '__main__':

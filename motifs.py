@@ -35,12 +35,13 @@ def HammingDistance(p, q):
 def Score(Motifs):
     return sum(map(lambda motif: HammingDistance(motif, Consensus(Motifs)), Motifs))
 
-def Pr(Text, Profile):
-    probability = 1
-    for i in range(len(Text)):
-        probability *= Profile[Text[i]][i]
-    return probability
+from functools import reduce
 
+def probability_of_generation(motif, profile_matrix):
+    return reduce(lambda x, y: x * y, [profile_matrix[motif[i]][i] for i in range(len(motif))], 1)
+
+def Pr(Text, Profile):
+    return probability_of_generation(Text, Profile)
 
 def ProfileMostProbableKmer(text, k, profile):
     probabilities = [0] * (len(text) - k + 1)
