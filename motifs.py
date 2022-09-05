@@ -44,12 +44,10 @@ def Pr(Text, Profile):
     return probability_of_generation(Text, Profile)
 
 def ProfileMostProbableKmer(text, k, profile):
-    probabilities = [0] * (len(text) - k + 1)
-    for iterator in range(len(text) - k + 1):
-        kmer = text[iterator:iterator + k]
-        probabilities[iterator] = Pr(kmer, profile)
+    kmers = [text[iterator:iterator + k] for iterator in range(len(text) - k + 1)]
+    probabilities = [probability_of_generation(kmer, profile) for kmer in kmers]
     probable_index = probabilities.index(max(probabilities))
-    return text[probable_index:probable_index + k]
+    return kmers[probable_index]
 
 
 def GreedyMotifSearch(Dna, k, t):

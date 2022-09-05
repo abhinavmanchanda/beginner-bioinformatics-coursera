@@ -65,6 +65,12 @@ class MotifsTest(unittest.TestCase):
         actual = Pr("AGA", {'A': [0.33, 0, 1], 'T': [0.67, 0, 0], 'C': [0, 0.33, 0], 'G': [0, 0.67, 0]})
         self.assertAlmostEqual(expected, actual, 2)
 
+    def test_find_most_probable_kmer_in_string_from_a_profile_matrix(self):
+        expected = "TGA"
+        actual = ProfileMostProbableKmer("AGATGACCA", 3,
+                        {'A': [0.33, 0, 1], 'T': [0.67, 0, 0], 'C': [0, 0.33, 0], 'G': [0, 0.67, 0]})
+        self.assertEqual(expected, actual)
+
     def test_should_greedily_search_for_motif(self):
         k = 3
         t = 5
