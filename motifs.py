@@ -46,22 +46,24 @@ def Pr(Text, Profile):
 def ProfileMostProbableKmer(text, k, profile):
     kmers = [text[iterator:iterator + k] for iterator in range(len(text) - k + 1)]
     probabilities = [probability_of_generation(kmer, profile) for kmer in kmers]
-    probable_index = probabilities.index(max(probabilities))
-    return kmers[probable_index]
-
+    return kmers[probabilities.index(max(probabilities))]
 
 def GreedyMotifSearch(Dna, k, t):
-    best_motifs = list(map(lambda current_dna: current_dna[0:k], Dna))
-    dna_string_length = len(Dna[0])
-    for i in range(dna_string_length - k + 1):
-        current_motifs = [""] * t
-        current_motifs[0] = Dna[0][i:i + k]
-        for j in range(1, t):
-            profile = Profile(current_motifs[0:j])
-            current_motifs[j] = ProfileMostProbableKmer(Dna[j], k, profile)
-        if Score(current_motifs) < Score(best_motifs):
-            best_motifs = current_motifs
-    return best_motifs
+    motif_combinations = [best_motifs_for_given_iteration(Dna, k, i) for i in range(len(Dna[0]) - k + 1)]
+    motif_scores = [Score(motifs) for motifs in motif_combinations]
+    return motif_combinations[motif_scores.index(min(motif_scores))]
+
+def best_motifs_for_given_iteration(dna, substring_length, index):
+    substring = dna[0][index: index + substring_length]
+    profile_matrix = Profile([substring])
+    return recursive_compute_best_motifs(dna, substring_length, [substring], profile_matrix, 1)
+
+def recursive_compute_best_motifs(dna, substring_length, previous_motifs, profile_matrix, row_index):
+    if row_index == len(dna):
+        return previous_motifs
+    motif_for_row_index = ProfileMostProbableKmer(dna[row_index], substring_length, profile_matrix)
+    current_motifs = previous_motifs + [motif_for_row_index]
+    return recursive_compute_best_motifs(dna, substring_length, current_motifs, Profile(current_motifs), row_index + 1)
 
 
 def CountWithPseudocounts(Motifs):
