@@ -49,27 +49,30 @@ def ProfileMostProbableKmer(text, k, profile):
     return kmers[probabilities.index(max(probabilities))]
 
 def GreedyMotifSearch(Dna, k, t):
-    motif_combinations = [best_motifs_for_given_iteration(Dna, k, i) for i in range(len(Dna[0]) - k + 1)]
+    return greedy_search_with_custom_profile_function(Dna, k, t, Profile)
+
+def greedy_search_with_custom_profile_function(Dna, k, t, profile_function):
+    motif_combinations = [best_motifs_for_given_iteration(Dna, k, i, profile_function) for i in range(len(Dna[0]) - k + 1)]
     motif_scores = [Score(motifs) for motifs in motif_combinations]
     return motif_combinations[motif_scores.index(min(motif_scores))]
 
-def best_motifs_for_given_iteration(dna, substring_length, index):
+def best_motifs_for_given_iteration(dna, substring_length, index, profile_function):
     substring = dna[0][index: index + substring_length]
-    profile_matrix = Profile([substring])
-    return recursive_compute_best_motifs(dna, substring_length, [substring], profile_matrix, 1)
+    profile_matrix = profile_function([substring])
+    return recursive_compute_best_motifs(dna, substring_length, [substring], profile_matrix, 1, profile_function)
 
-def recursive_compute_best_motifs(dna, substring_length, previous_motifs, profile_matrix, row_index):
+def recursive_compute_best_motifs(dna, substring_length, previous_motifs, profile_matrix, row_index, profile_function):
     if row_index == len(dna):
         return previous_motifs
     motif_for_row_index = ProfileMostProbableKmer(dna[row_index], substring_length, profile_matrix)
     current_motifs = previous_motifs + [motif_for_row_index]
-    return recursive_compute_best_motifs(dna, substring_length, current_motifs, Profile(current_motifs), row_index + 1)
+    return recursive_compute_best_motifs(dna, substring_length, current_motifs,
+                                         profile_function(current_motifs), row_index + 1, profile_function)
 
 
 def CountWithPseudocounts(Motifs):
     motifs_count = Count(Motifs)
     return {key: add_pseudocount_toarray(value) for key, value in motifs_count.items()}
-
 
 def add_pseudocount_toarray(motif_count_array):
     return list(map(lambda x: x + 1, motif_count_array))
@@ -79,31 +82,13 @@ def ProfileWithPseudocounts(Motifs):
     divisor = len(Motifs) + 4
     return {key: list(map(lambda x: x / divisor, value)) for key, value in motifs_pseudocounts.items()}
 
-
 def GreedyMotifSearchWithPseudocounts(Dna, k, t):
-    motif_combinations = [best_motifs_for_given_iteration_with_pseudocounts(Dna, k, i) for i in range(len(Dna[0]) - k + 1)]
-    motif_scores = [Score(motifs) for motifs in motif_combinations]
-    return motif_combinations[motif_scores.index(min(motif_scores))]
-
-def best_motifs_for_given_iteration_with_pseudocounts(dna, substring_length, index):
-    substring = dna[0][index: index + substring_length]
-    profile_matrix = ProfileWithPseudocounts([substring])
-    return recursive_compute_best_motifs_with_pseudocounts(dna, substring_length, [substring], profile_matrix, 1)
-
-def recursive_compute_best_motifs_with_pseudocounts(dna, substring_length, previous_motifs, profile_matrix, row_index):
-    if row_index == len(dna):
-        return previous_motifs
-    motif_for_row_index = ProfileMostProbableKmer(dna[row_index], substring_length, profile_matrix)
-    current_motifs = previous_motifs + [motif_for_row_index]
-    return recursive_compute_best_motifs(dna, substring_length, current_motifs, ProfileWithPseudocounts(current_motifs), row_index + 1)
-
+    return greedy_search_with_custom_profile_function(Dna, k, t, ProfileWithPseudocounts)
 
 def Motifs(Profile, Dna):
     return list(map(lambda text: ProfileMostProbableKmer(text, len(Profile[next(iter(Profile))]), Profile), Dna))
 
-
 import random
-
 
 def RandomMotifs(Dna, k, t):
     return list(map(lambda text: select_random_motif(text, k), Dna))
