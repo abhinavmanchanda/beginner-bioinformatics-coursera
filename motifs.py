@@ -93,11 +93,9 @@ import random
 def RandomMotifs(Dna, k, t):
     return list(map(lambda text: select_random_motif(text, k), Dna))
 
-
 def select_random_motif(dna_text, motif_length):
     position = random.randint(0, len(dna_text) - motif_length)
     return dna_text[position: position + motif_length]
-
 
 def RandomizedMotifSearch(Dna, k, t):
     random_motifs = RandomMotifs(Dna, k, t)
@@ -126,7 +124,6 @@ def WeightedDie(Probabilities):
     random_fraction = random.uniform(0, 1)
     return next(key for key, value in key_to_range.items() if value['lower'] < random_fraction <= value['upper'])
 
-
 def key_vs_range(Probabilities):
     key_list = Probabilities.keys()
     value_list = map(lambda key: Probabilities[key], key_list)
@@ -141,3 +138,21 @@ def ProfileGeneratedString(Text, profile, k):
     probabilities = {Text[index:index+k]: Pr(Text[index:index+k], profile) for index in range(text_length - k + 1)}
     weighted_probabilities = Normalize(probabilities)
     return WeightedDie(weighted_probabilities)
+
+
+def generate_new_motifs(dna_strings, kmer_length, current_motifs, index):
+    temp_motifs = current_motifs[:index] + current_motifs[index+1:]
+    profile_matrix = ProfileWithPseudocounts(temp_motifs)
+    new_motif = ProfileGeneratedString(dna_strings[index], profile_matrix, kmer_length)
+    return current_motifs[:index] + [new_motif] + current_motifs[index+1:]
+
+
+def GibbsSampler(Dna, k, t, N):
+    random_indices = [random.randint(0, t-1) for i in range(N)]
+    initial_value = RandomMotifs(Dna, k, t)
+    output = list(reduce(
+                lambda current_motifs, index : generate_new_motifs(Dna, k, current_motifs, index),
+                random_indices,
+                initial_value))
+    return output
+
